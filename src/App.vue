@@ -9,6 +9,8 @@ import { RouterView } from "vue-router";
 </script>
 
 <style>
+@import "assets/tailwind.css";
+
 body,
 html {
     height: 100%;
