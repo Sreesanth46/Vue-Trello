@@ -3,52 +3,69 @@ import { nanoid } from 'nanoid';
 import type { Column, Task } from '~/types';
 import draggable from 'vuedraggable';
 
-const columns = ref<Column[]>([
+const columns = useLocalStorage<Column[]>(
+  'trelloBoard',
+  [
+    {
+      id: nanoid(),
+      title: 'Backlog',
+      tasks: [
+        {
+          id: nanoid(),
+          title: 'task 1',
+          createdAt: new Date()
+        },
+        {
+          id: nanoid(),
+          title: 'task 2',
+          createdAt: new Date()
+        },
+        {
+          id: nanoid(),
+          title: 'task 3',
+          createdAt: new Date()
+        }
+      ]
+    },
+
+    {
+      id: nanoid(),
+      title: 'In Progress',
+      tasks: []
+    },
+
+    {
+      id: nanoid(),
+      title: 'Open',
+      tasks: []
+    },
+    {
+      id: nanoid(),
+      title: 'Closed',
+      tasks: []
+    },
+
+    {
+      id: nanoid(),
+      title: 'Resigned',
+      tasks: []
+    }
+  ],
   {
-    id: nanoid(),
-    title: 'Backlog',
-    tasks: [
-      {
-        id: nanoid(),
-        title: 'task 1',
-        createdAt: new Date()
+    serializer: {
+      read: value => {
+        return JSON.parse(value).map((column: Column) => {
+          column.tasks = column.tasks.map((task: Task) => {
+            task.createdAt = new Date(task.createdAt);
+            return task;
+          });
+          return column;
+        });
       },
-      {
-        id: nanoid(),
-        title: 'task 2',
-        createdAt: new Date()
-      },
-      {
-        id: nanoid(),
-        title: 'task 3',
-        createdAt: new Date()
-      }
-    ]
-  },
-
-  {
-    id: nanoid(),
-    title: 'In Progress',
-    tasks: []
-  },
-
-  {
-    id: nanoid(),
-    title: 'Open',
-    tasks: []
-  },
-  {
-    id: nanoid(),
-    title: 'Closed',
-    tasks: []
-  },
-
-  {
-    id: nanoid(),
-    title: 'Resigned',
-    tasks: []
+      write: value => JSON.stringify(value)
+    }
   }
-]);
+);
 
 const alt = useKeyModifier('Alt');
 
@@ -72,6 +89,18 @@ function createColumn() {
     ).focus();
   });
 }
+
+/**
+ * To update columns in the backend server
+ * deep: true -> since columns is an array
+ */
+// watch(
+//   columns,
+//   () => {
+//     // api call
+//   },
+//   { deep: true }
+// );
 </script>
 
 <template>
