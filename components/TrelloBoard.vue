@@ -75,11 +75,17 @@ const alt = useKeyModifier('Alt');
             :group="{ name: 'tasks', pull: alt ? 'clone' : true }"
             item-key="id">
             <template #item="{ element: task }: { element: Task }">
-              <TrelloBoardTask :task="task" />
+              <div>
+                <TrelloBoardTask
+                  :task="task"
+                  @delete="
+                    column.tasks = column.tasks.filter(t => t.id !== $event)
+                  " />
+              </div>
             </template>
           </draggable>
           <footer>
-            <button class="text-gray-500">+ Add a card</button>
+            <NewTask @add="column.tasks.push($event)" />
           </footer>
         </div>
       </template>
